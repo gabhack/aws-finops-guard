@@ -1,0 +1,24 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required: []
+    properties:
+      licenseKey:
+        type: string
+        title: Gumroad Pro License Key (Optional)
+        description: Optional Gumroad Pro ($49) or Team ($99) license key to unlock Terraform HCL auto-remediation and CI/CD SARIF 2.1.0 export. Leave blank for the Free Read-Only Open-Core tier.
+  commandFunction:
+    # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
+    |-
+    (config) => ({
+      command: "python3",
+      args: ["-m", "aws_finops_guard.cli", "mcp"],
+      env: config.licenseKey
+        ? { AWS_FINOPS_GUARD_LICENSE_KEY: config.licenseKey }
+        : {}
+    })
+  exampleConfig:
+    licenseKey: ""
